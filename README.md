@@ -4,6 +4,10 @@
 
 Electron Image Resizer is a desktop application built with Electron, React, and Node.js that allows users to upload, resize, and save images to their local filesystem. The app provides a simple and intuitive interface for resizing images and includes progress indicators for resizing and saving actions to enhance user experience.
 
+<div align="center">
+<img width="1438" alt="Screenshot 2024-08-31 at 3 59 13 PM" src="https://github.com/user-attachments/assets/0f02d4ce-bd68-4bb3-8d38-165de2face72">
+</div>
+
 ## Features
 
 - **Upload Images**: Users can upload images directly from their computer.
