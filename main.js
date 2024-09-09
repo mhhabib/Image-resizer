@@ -13,31 +13,31 @@ function createWindow() {
 		width: width,
 		height: height,
 		webPreferences: {
-			nodeIntegration: false, // Ensure this is false for security
-			contextIsolation: true, // Enable context isolation for security
-			preload: preloadPath, // Correct path to preload.js
+			contextIsolation: true,
+			preload: preloadPath,
 		},
 	});
+	mainWindow.webContents.openDevTools();
+	mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+	// // Function to load URL once server is ready
+	// const loadURLWhenReady = () => {
+	// 	const socket = new net.Socket();
 
-	// Function to load URL once server is ready
-	const loadURLWhenReady = () => {
-		const socket = new net.Socket();
+	// 	socket.on('connect', () => {
+	// 		socket.end();
+	// 		mainWindow.loadURL(serverURL);
+	// 		// Uncomment to open DevTools by default
+	// 		mainWindow.webContents.openDevTools();
+	// 	});
 
-		socket.on('connect', () => {
-			socket.end();
-			mainWindow.loadURL(serverURL);
-			// Uncomment to open DevTools by default
-			mainWindow.webContents.openDevTools();
-		});
+	// 	socket.on('error', () => {
+	// 		setTimeout(loadURLWhenReady, 1000);
+	// 	});
 
-		socket.on('error', () => {
-			setTimeout(loadURLWhenReady, 1000);
-		});
+	// 	socket.connect(port, 'localhost');
+	// };
 
-		socket.connect(port, 'localhost');
-	};
-
-	loadURLWhenReady();
+	// loadURLWhenReady();
 }
 
 app.whenReady().then(createWindow);
@@ -59,8 +59,8 @@ ipcMain.on('save-image', async (event, dataURL) => {
 	const win = BrowserWindow.getFocusedWindow();
 	const options = {
 		title: 'Save Resized Image',
-		defaultPath: path.join(app.getPath('pictures'), 'resized-image.png'),
-		buttonLabel: 'Save',
+		defaultPath: path.join(app.getPath('desktop'), 'resized-image.png'),
+		buttonLabel: 'Save Image',
 		filters: [{ name: 'Images', extensions: ['png'] }],
 	};
 

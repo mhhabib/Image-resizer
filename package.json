@@ -6,7 +6,41 @@
 	"scripts": {
 		"start": "webpack serve --mode development",
 		"electron": "electron .",
-		"dev": "concurrently \"npm start\" \"npm run electron\""
+		"dev": "concurrently \"npm start\" \"npm run electron\"",
+		"build": "webpack --config webpack.prod.config.js",
+		"dist": "npm run build && electron-builder"
+	},
+	"build": {
+		"appId": "com.laltomato.imageresizer",
+		"productName": "ImageResizer",
+		"directories": {
+			"output": "dist_electron"
+		},
+		"files": [
+			"dist/**/*",
+			"main.js",
+			"src/preload.js",
+			"package.json"
+		],
+		"win": {
+			"target": [
+				"nsis"
+			],
+			"icon": "./src/images/resize.png"
+		},
+		"mac": {
+			"target": [
+				"dmg"
+			],
+			"icon": "./src/images/resize.png"
+		},
+		"linux": {
+			"target": [
+				"AppImage",
+				"deb"
+			],
+			"icon": "./src/images/resize.png"
+		}
 	},
 	"keywords": [],
 	"author": "",

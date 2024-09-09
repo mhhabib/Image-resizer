@@ -2,6 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import ImageUpload from './ImageUpload.jsx';
 
+const STATUS = {
+	ERROR: 'Resize image height and width should be different!',
+	PENDING: 'Image resizing is on the way...',
+	COMPLETED: 'Image resize completed!',
+};
+
 const App = () => {
 	const [imageData, setImageData] = useState(null);
 	const [resizeDimensions, setResizeDimensions] = useState(null);
@@ -41,6 +47,7 @@ const App = () => {
 		setImageData(data);
 		setResizedImage(null);
 		setResizeDimensions(data);
+		setResizingStatus(null);
 	};
 
 	const handleInputChange = (e) => {
@@ -49,7 +56,14 @@ const App = () => {
 	};
 
 	const handleResize = () => {
-		setResizingStatus('Resizing...');
+		if (
+			resizeDimensions.width === imageData.width &&
+			resizeDimensions.height === imageData.height
+		) {
+			setResizingStatus(STATUS.ERROR);
+			return;
+		}
+		setResizingStatus(STATUS.PENDING);
 		setProgress(0);
 
 		let progressValue = 0;
@@ -75,7 +89,7 @@ const App = () => {
 					);
 					const dataURL = canvas.toDataURL();
 					setResizedImage(dataURL);
-					setResizingStatus('Resize completed!');
+					setResizingStatus(STATUS.COMPLETED);
 
 					setTimeout(() => {
 						setResizingStatus(null);
@@ -89,9 +103,11 @@ const App = () => {
 	const handleSaveToFile = () => {
 		window.api.saveImage(resizedImage);
 	};
-
+	const handleInputFocus = (e) => {
+		setResizingStatus(null);
+	};
 	return (
-		<div className="flex flex-col justify-start items-center h-screen bg-gray-900 p-4 space-y-6">
+		<div className="flex flex-col justify-start items-center min-h-screen h-full bg-gray-900 p-4 space-y-6">
 			<div className="w-full">
 				<h1 className="text-4xl font-bold text-blue-500 mt-4 mb-4 text-center uppercase">
 					Image Resizer
@@ -99,9 +115,11 @@ const App = () => {
 				<hr className="w-[50%] mx-auto my-4" />
 				<ImageUpload onImageUpload={handleImageUpload} />
 				{imageData && (
-					<p className="text-center py-4 text-white">
-						Name: {resizeDimensions.name}, Width: {resizeDimensions.width},
-						Height: {resizeDimensions.height}
+					<p className="text-center py-4 text-green-400">
+						{resizeDimensions.name.length > 15
+							? resizeDimensions.name.substring(0, 15) + '...'
+							: resizeDimensions.name}{' '}
+						successfully uploaded!
 					</p>
 				)}
 				{imageData && (
@@ -111,6 +129,7 @@ const App = () => {
 							name="width"
 							value={resizeDimensions.width}
 							onChange={handleInputChange}
+							onFocus={handleInputFocus}
 							className="p-2 rounded border border-gray-300"
 							placeholder="Width"
 						/>
@@ -119,6 +138,7 @@ const App = () => {
 							name="height"
 							value={resizeDimensions.height}
 							onChange={handleInputChange}
+							onFocus={handleInputFocus}
 							className="p-2 rounded border border-gray-300"
 							placeholder="Height"
 						/>
@@ -140,7 +160,15 @@ const App = () => {
 				)}
 				{resizingStatus && (
 					<div className="text-center py-4 text-white">
-						<p>{resizingStatus}</p>
+						<p
+							className={`${
+								resizingStatus === STATUS.ERROR
+									? 'text-red-400'
+									: 'text-gray-200'
+							}`}
+						>
+							{resizingStatus}
+						</p>
 						{progress > 0 && progress < 100 && (
 							<div className="w-[50%] mx-auto bg-gray-700 rounded-full h-2.5">
 								<div
